@@ -1,0 +1,84 @@
+# Building a real-time analytics dashboard with Streamlit, Apache Pinot, and Apache Kafka
+
+Clone repository
+
+[source, bash]
+----
+git clone git@github.com:mneedham/pinot-wiki.git && cd pinot-wiki
+----
+
+Spin up all components
+
+[source, bash]
+----
+docker-compose up
+----
+
+or on the Mac M1:
+
+[source, bash]
+----
+docker-compose -f docker-compose-m1.yml up
+----
+
+Setup Python
+
+Ingest Wikipedia events
+
+[source, bash]
+----
+python -m venv .venv
+source venv/bin/activate
+pip install -r requirements.txt
+----
+
+Create Kafka topic
+
+[source, bash]
+----
+docker exec -it kafka-wiki kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
+  --partitions 5 \
+  --topic wiki-events \
+  --create 
+----
+
+Ingest Wikipedia events
+
+[source, bash]
+----
+python wiki_to_kafka.py
+----
+
+Check Wikipedia events are ingesting
+
+[source, bash]
+----
+docker exec -it kafka-wiki kafka-run-class.sh kafka.tools.GetOffsetShell \
+  --broker-list localhost:9092 \
+  --topic wiki-events
+----
+
+[souce, bash]
+----
+kafkacat -C -b localhost:9092 -t wiki-events
+----
+
+Add Pinot Table
+
+[source, bash]
+----
+docker exec -it pinot-controller-wiki bin/pinot-admin.sh AddTable \
+  -tableConfigFile /config/table.json \
+  -schemaFile /config/schema.json \
+  -exec
+----
+
+Open the Pinot UI http://localhost:9000/
+
+Run Streamlit app
+
+[source, bash]
+----
+streamlit run streamlit/app.py
+----
