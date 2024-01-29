@@ -1,14 +1,5 @@
 # Building a real-time analytics dashboard with Streamlit, Apache Pinot, and Apache Kafka
 
-Clone repository
-
-[source, bash]
-----
-git clone git@github.com:mneedham/pinot-wiki.git && cd pinot-wiki
-----
-
-Spin up all components
-
 [source, bash]
 ----
 docker-compose up
