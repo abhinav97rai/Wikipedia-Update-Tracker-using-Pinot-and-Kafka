@@ -1,5 +1,6 @@
 # Building a real-time analytics dashboard with Streamlit, Apache Pinot, and Apache Kafka
 
+Spinup all the components:
 [source, bash]
 ----
 docker-compose up
